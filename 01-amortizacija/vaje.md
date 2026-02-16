@@ -1,6 +1,12 @@
 # Amortizirana časovna zahtevnost
 
+Po definiciji amortizirane časovne zahtevnosti in z računovodsko metodo rešite spodnje naloge.
+
 ## 1. naloga
+
+Razširite sklad z operacijo $\mathrm{multipop}_k$, ki odstrani zgornjih $k$ elementov in ima časovno zahtevnost $O(k)$. Dokažite, da je amortizirana časovna zahtevnost vseh operacij (na izbiro imamo $\mathrm{push}, \mathrm{pop}, \mathrm{multipop}_k$) na skladu še vedno $O(1)$.
+
+## 2. naloga
 
 Denimo, da imamo strukturo, kjer izvajamo $n$ zaporednih operacij $a_i$ s ceno:
 
@@ -18,10 +24,6 @@ Denimo, da imamo strukturo, kjer izvajamo $n$ zaporednih operacij $a_i$ s ceno:
     \end{cases}$$
 
 Kolikšne so amortizirane časovne zahtevnosti v teh primerih?
-
-## 2. naloga
-
-Razširite sklad z operacijo $\mathrm{multipop}_k$, ki odstrani zgornjih $k$ elementov in ima časovno zahtevnost $O(k)$. Dokažite, da je amortizirana časovna zahtevnost vseh operacij (na izbiro imamo $\mathrm{push}, \mathrm{pop}, \mathrm{multipop}_k$) na skladu še vedno $O(1)$.
 
 ## 3. naloga
 
