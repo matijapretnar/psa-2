@@ -2,7 +2,14 @@
 
 ## 2. domača naloga
 
-Cilj naloge je, da se poglobljeno spoznate z eno izmed vrst dreves, obravnavanih na predavanjih, ter znanje pokažete s kratko predstavitvijo in implementacijo v izbranem programskem jeziku.
+Cilj naloge je, da se poglobljeno spoznate z eno izmed spodnjih vrst dreves:
+
+- [AA-drevesa](https://en.wikipedia.org/wiki/AA_tree)
+- [B-drevesa](https://en.wikipedia.org/wiki/B-tree)
+- [drevesa grešnega kozla](https://en.wikipedia.org/wiki/Scapegoat_tree)
+- [lomljena drevesa](https://en.wikipedia.org/wiki/Splay_tree)
+
+ter znanje pokažete s kratko predstavitvijo in implementacijo v izbranem programskem jeziku.
 
 Kriterij:
 
