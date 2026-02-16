@@ -27,4 +27,4 @@ Kolikšne so amortizirane časovne zahtevnosti v teh primerih?
 
 ## 3. naloga
 
-Implementirajte vrsto z dvema skladoma in analizirajte časovno zahtevnost.
+Kakšna je amortizirana časovna zahtevnost vrste implementirane z dvema skladoma?
