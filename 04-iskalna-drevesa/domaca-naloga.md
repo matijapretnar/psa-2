@@ -1,6 +1,6 @@
 # Iskalna drevesa
 
-## 2. domača naloga
+## 3. domača naloga
 
 Cilj naloge je, da se poglobljeno spoznate z eno izmed spodnjih vrst dreves:
 
