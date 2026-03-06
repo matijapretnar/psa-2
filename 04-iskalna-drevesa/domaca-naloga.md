@@ -7,7 +7,9 @@ Cilj naloge je, da se poglobljeno spoznate z eno izmed spodnjih vrst dreves:
 - [AA-drevesa](https://en.wikipedia.org/wiki/AA_tree)
 - [B-drevesa](https://en.wikipedia.org/wiki/B-tree)
 - [drevesa grešnega kozla](https://en.wikipedia.org/wiki/Scapegoat_tree)
+- [$k$-d drevesa](https://en.wikipedia.org/wiki/K-d_tree)
 - [lomljena drevesa](https://en.wikipedia.org/wiki/Splay_tree)
+- [rdeče-črna drevesa](https://en.wikipedia.org/wiki/Red–black_tree)
 
 ter znanje pokažete s kratko predstavitvijo in implementacijo v izbranem programskem jeziku.
 
