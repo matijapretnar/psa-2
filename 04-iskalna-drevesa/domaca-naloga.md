@@ -13,7 +13,7 @@ Cilj naloge je, da se poglobljeno spoznate z eno izmed spodnjih vrst dreves:
 
 ter znanje pokažete s kratko predstavitvijo in implementacijo v izbranem programskem jeziku.
 
-Kriterij:
+### Kriterij
 
 - Razlaga strukture in invariant (jasnost, pravilnost).
 - Kompleksnosti in uporaba (razumevanje, argumentacija).
@@ -48,3 +48,7 @@ Pripravite primer, na katerem boste pokazali:
 - da se elementi pravilno vstavljajo,
 - da iskanje vrača pravilen rezultat,
 - da se invarianta ohranja (vsaj posredno).
+
+### Oddaja
+
+Rezultate naloge predstavite v pregledni obliki (npr. Jupyter notebook, program & PDF, …) ter oddajte prek spletne učilnice. Nalogo rešujte v parih, odda pa naj jo le eden iz para.
