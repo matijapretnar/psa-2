@@ -15,7 +15,7 @@ Običajno pa je $n \ll u$, zato bi bila taka tabela nerazumno velika. Namesto te
 1. **hitra**: izračunljiva v času $O(1)$,
 2. **lokalno injektivna**: za ustrezno majhne podmnožice $U' \subseteq U$ z $|U'| \leq m$ je zožitev $h|_{U'}$ injektivna.
 
-Ker lokalna injektivnost na splošno ne drži za vse možne podmnožice, moramo upoštevati možnost _trkov_ ($h(x) = h(y)$ za $x \neq y$). Poznamo dva glavna pristopa za reševanje trkov:
+Ker lokalna injektivnost na splošno ne drži za vse možne podmnožice, moramo upoštevati možnost _trkov_ ($h(x_1) = h(x_2)$ za $x_1 \neq x_2$). Poznamo dva glavna pristopa za reševanje trkov:
 
 ## Reševanje trkov z veriženjem
 
@@ -130,3 +130,131 @@ $$
 $$
 
 ∎
+
+## Družine zgoščevalnih funkcij
+
+Zgornje analize temeljijo na predpostavkah o enakomernem zgoščevanju, ki pa niso lastnost konkretne funkcije $h$, temveč predpostavka o porazdelitvi ključev ali slučajni izbiri funkcije. V praksi fiksna deterministična $h$ nikoli ne zadosti tem predpostavkam za vse možne vhode — obstaja namreč vhod, ki povzroči $\Theta(n)$ trkov.
+
+Rešitev je, da $h$ **izberemo naključno** iz neke vnaprej določene _družine_ zgoščevalnih funkcij $\mathcal{H}$.
+
+**Definicija.** Družina funkcij $\mathcal{H} = \{ h \colon U \to [m] \}$ je _univerzalna_, če za vsaka ključa $x_1 \neq x_2 \in U$ velja
+
+$$
+\#\{h \sim \mathcal{H} \mid (h(x_1) = h(x_2) \} \leq \frac{\# \mathcal{H}}{m}.
+$$
+
+Enostavno enakomerno zgoščevanje zahteva, da za vsak $x$ velja $P(h(x) = y) = 1/m$ za vsak $y$. Ključni člen pri dokazu časovne zahtevnosti poizvedb v zgoščenih tabelah z veriženju je bila ocena $E[X_{ij}] = P(h(x_i) = h(x_j)) = 1/m$, ki ga pri univerzalnih družinah lahko ocenimo na $E[X_{ij}] \leq 1/m$, s čimer pričakovani ostanejo $\Theta(1 + \alpha)$.
+
+Univerzalne družine včasih posplošimo na $c$-univerzalne, kjer dobimo verjetnost trka $\leq c/m$ za neko konstanto $c \geq 1$. Pri tem se čas poveča na $\Theta(1 + c \alpha)$. Za **enakomerno zgoščevanje** (predpostavka pri odprtem naslavljanju) zahteva _$k$-neodvisnost_/_krepko $k$-univerzalnost_/… (terminologija ni poenotena):
+
+**Definicija.**  Družina funkcij $\mathcal{H} = \{ h \colon U \to [m] \}$ je _$k$-neodvisna_, če za različne $x_1, \ldots, x_k \in U$ ter $y_1, \ldots, y_k \in [m]$ velja
+
+$$
+P_{h \sim \mathcal{H}}(h(x_1) = y_1, \ldots, h(x_k) = y_k) = \frac{1}{m^k}.
+$$
+
+Praktičnih univerzalnih družin, ki bi zagotavljale pravo enakomerno zgoščevanje, ni, a dvojno zgoščevanje z $c$-univerzalnima $h_1, h_2$ v praksi dobro aproksimira te lastnosti.
+
+**Trditev.** $2$-neodvisna družina je univerzalna.
+
+_Dokaz._ Za $x_1 \neq x_2$ in naključno $h$ iz $2$-neodvisne družine velja
+
+$$P(h(x_1) = h(x_2)) = P(\bigvee_y (h(x_1) = y \land h(x_2) = y)) \le \sum_y P(h(x_1) = y \land P(h(x_2) = y) = \sum_y \frac{1}{m^2} = \frac{1}{m})$$
+
+∎
+
+### Linearno zgoščevanje po praštevilskem modulu
+
+Vzemimo dovolj veliko praštevilo $p \geq u \geq m$. Definiramo
+
+$$\mathcal{H}_{p,m} = \bigl\{ h_{a,b}(x) = ((ax + b) \bmod p) \bmod m \;\bigm|\; a \in [p] \setminus \{0\},\; b \in [p] \bigr\}.$$
+
+**Izrek.** Družina $\mathcal{H}_{p,m}$ je 1-univerzalna.
+
+_Dokaz._ Izberimo morebitni trk $h_{a,b}(x) = h_{a,b}(y)$. Označimo $r = ax + b \bmod p$ in $s = ay + b \bmod p$. Tedaj je $r - s = a(x - y) \bmod p$, torej je $r \neq s$, zato do trka lahko pride le, če $r$ in $s$ padeta v isti razred po modulu $m$. Še več, dobimo bijekcijo med pari $(a, b)$, kjer je $a \ne 0$ in pari $(r, s)$, kjer je $r \ne s$. Zato je za poljuben par $(x, y)$ ob naključni izbiri $a, b$ verjetnost trka enaka verjetnosti, da naključno izbrana $(r, s)$ padeta v isti razred po modulu $m$. Za dani $r$ je takih $s$ manj kot $(p - 1)/m$ in verjetnost trka je kvečjemu $((p - 1)/m) / (p - 1) = 1/m$. ∎
+
+## Popolno zgoščevanje
+
+Veriženje in odprto naslavljanje zagotavljata le pričakovani čas $O(1)$, najslabši primer pa je $\Theta(n)$. Za _statične_ množice pa je mogoče doseči $O(1)$ tudi v najslabšem primeru. Taki shemi pravimo **popolno zgoščevanje** (angl. _perfect hashing_).
+
+Opazimo, da iz univerzalnosti družine $\mathcal{H}$ sledi
+
+$$E\big[\#\text{trkov}\big] = E\left[\sum_{\{x, y\} \subseteq S} [h(x) = h(y)]\right] = \binom{n}{2} \cdot \frac{1}{m} < \frac{n^2}{2m}.$$
+
+Če torej izberemo $m = n^2$, po neenakosti Markova ($P(X \geq k) \leq E[X]/k$) velja, da je pričakovano število trkov manjše od $1/2$, kar vodi do poizvedb v času $O(1)$. Slabost je poraba $O(n^2)$ prostora.
+
+Za doseganje $O(1)$ najslabšega časa in $O(n)$ prostora hkrati uporabimo **dvonivojsko shemo**:
+
+- **Prva raven**: funkcija $h_1$ iz 1-univerzalne družine preslika $n$ ključev v tabelo $T$ z $n$ mesti.
+
+- **Druga raven**: za vsako režo $j$ z $n_j \geq 1$ elementi zgradimo sekundarno tabelo $T_j$ velikosti $n_j^2$ z naključno izbrano funkcijo $h \in \mathcal{H}_{p, m_j}$. Izbiro funkcije $h$ ponavljamo toliko časa, dokler znotraj $T_j$ ni nobenega trka. Po zgornjem vidimo, da je pričakovano število trkov manjše od $1/2$, zato je pričakovano število poizkusov $O(1)$.
+
+**Trditev.** Pričakovana skupna velikost vseh sekundarnih tabel je $O(n)$.
+
+_Dokaz._ V splošnem velja $n^2 = n + 2 \binom{n}{2}$, zato je skupni prostor, ki ga potrebujemo, enak
+
+$$E\big[\sum_{j=0}^{m-1} n_j^2\big] = E\Big[\sum_{j=0}^{m-1} (n_j + 2 \binom{n_j}{2})\Big] = n + 2 E\Big[\sum_{j=0}^{m-1} \binom{n_j}{2}\Big].$$
+
+Toda vsota $\sum_{j=0}^{m-1} \binom{n_j}{2}$ je ravno število trkov $n$ elementov na prvi ravni, ki pa je zaradi univeralnosti manj kot
+
+$$\binom{n}{2} \cdot \frac{1}{m} = \frac{n - 1}{2}$$
+
+Zato je
+
+$$E\big[\sum_{j=0}^{m-1} n_j^2\big] \le n + 2 \frac{n - 1}{2} < 2 n$$
+
+∎
+
+Še več, po neenakosti Markova lahko ocenimo, da je verjetnost, da skupna velikost sekundarnih tabel preseže $4n$, manjša od $1/2$. Zato lahko shemo zgradimo v pričakovanem času $O(n)$, pri čemer bo poraba prostora $O(n)$ in čas poizvedbe $O(1)$ v najslabšem primeru.
+
+## Bloomovi filtri
+
+Bloomov filter je naključnostna podatkovna struktura za učinkovito predstavitev množic, ki v zameno za manjšo porabo prostora dopušla **lažno pozitivne** odgovore, a nikoli **lažno negativnih** (angl. _false negatives_). Natančneje:
+
+- `lookup(x)` vrne DA: $x$ je v množici **z veliko verjetnostjo**, a obstaja majhna možnost napake.
+- `lookup(x)` vrne NE: $x$ **zagotovo ni** v množici,
+
+Filtri so uporabni za hitro preverjanje prisotnosti elementov, na primer pri velikih bazah podatkov. Brskalniki na primer vzdržujejo lokalne Bloomove filtre znanih zlonamernih URL-jev: ob vsakem obisku najprej preverijo lokalni filter in le ob pozitivnem odgovoru poizvedejo centralno bazo (kjer se lažno pozitivni odgovori zavrnejo). Podobno CDN-ji z Bloomovimi filtri ugotavljajo, ali je bil neka stran že zahtevana, preden se odločijo za njeno shranjevanje v predpomnilnik.
+
+Bloomov filter sestoji iz:
+
+- bitne tabele $B$ dolžine $m$ z vsemi biti sprva nastavljenimi na $0$,
+- $k$ neodvisnih zgoščevalnih funkcij $h_1, \ldots, h_k \colon U \to [m]$.
+
+**Vstavljanje** za vsak $i = 1, \ldots, k$ postavimo $B[h_i(x)]$ na $1$.
+
+**Iskanje** vrne DA natanko takrat, ko $B[h_i(x)] = 1$ za vse $i = 1, \ldots, k$.
+
+Brisanje ni podprto, saj ponastavitev bita $B[h_i(x)]$ morda uniči informacijo o drugem elementu, ki je nastavil isti bit.
+
+Po vstavljanju $n$ elementov je vsak bit v $B$ neodvisno postavljen na $1$ z verjetnostjo
+
+$$
+p = 1 - \left(1 - \frac{1}{m}\right)^{kn} \approx 1 - e^{-kn/m}.
+$$
+
+Ob iskanju neobstoječega ključa tako dobimo lažno pozitiven odgovor z verjetnostjo $\varepsilon \approx \left(1 - e^{-kn/m}\right)^k = p^k$.
+
+Pri danih $m$ in $n$ želimo izbrati $k$, ki minimizira $\varepsilon$ oz. $\ln \varepsilon = k \ln p$. Odvajajmo po $k$:
+
+$$
+(k \ln p)'
+= \ln p + k \cdot \frac{p'}{p}
+= \ln p + k \cdot \frac{n/m \cdot e^{-kn/m}}{p}
+= \ln p + \ln (1 - p) \cdot \frac{(1 - p)}{p} 
+$$
+
+kar je enako $0$, ko je $p \ln p = (1 - p) \ln (1 - p)$ oz. ko je $p = 1/2$.
+To je tudi smiselno: informacija je največja, ko ob iskanju neobstoječega ključa vsaka funkcija z enako verjetnostjo vrne $0$ ali $1$. Iz tega tudi izračunamo optimalno število zgoščevalnih funkcij $k^* = \lfloor \frac{m}{n} \ln 2 \rfloor$ (zaradi učinkovitosti raje zaokrožimo navzdol).
+
+Pti optimalnem $p = 1/2$ torej velja
+
+$$
+\varepsilon \approx \left(\frac{1}{2}\right)^{\frac{m}{n} \ln 2} = e^{-\frac{m}{n} (\ln 2)^2} \approx (0{,}6185)^{m/n}
+$$
+
+oziroma
+
+$$m \approx -\frac{n \ln \varepsilon}{(\ln 2)^2} \approx 2{,}08 \, n \ln \frac{1}{\varepsilon} = 1{,}44 \, n \log_2 \frac{1}{\varepsilon}$$
+
+Za vsak element torej potrebujemo približno $1{,}44 \log_2(1/\varepsilon)$ bitov. Teoretična spodnja meja je $\log_2(1/\varepsilon)$ bitov.
