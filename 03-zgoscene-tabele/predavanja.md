@@ -257,4 +257,4 @@ oziroma
 
 $$m \approx -\frac{n \ln \varepsilon}{(\ln 2)^2} \approx 2{,}08 \, n \ln \frac{1}{\varepsilon} = 1{,}44 \, n \log_2 \frac{1}{\varepsilon}$$
 
-Za vsak element torej potrebujemo približno $1{,}44 \log_2(1/\varepsilon)$ bitov. Teoretična spodnja meja je $\log_2(1/\varepsilon)$ bitov.
+Za vsak element torej potrebujemo približno $1{,}44 \log_2(1/\varepsilon)$ bitov. Pokazati se da, da je teoretična spodnja meja za strukturo, ki podpira enake operacije kot Bloomov filter, enaka $\log_2(1/\varepsilon)$ bitov na element.
