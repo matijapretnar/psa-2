@@ -1,3 +1,5 @@
+import Debug.Trace
+
 class Ord a => Heap h a where
     empty     :: h a
     isEmpty   :: h a -> Bool
@@ -36,40 +38,58 @@ instance Ord a => Heap LeftistHeap a where
     deleteMin (T _ _ a b) = merge a b
 
 
-data Tree a = NODE Int a [Tree a]
-newtype BinomialHeap a = BH [Tree a]
+data BinomialTree a = NODE Int a [BinomialTree a]
+newtype BinomialHeap a = BH [BinomialTree a]
 
-rankT :: Tree a -> Int
+rankT :: BinomialTree a -> Int
 rankT (NODE r _ _) = r
 
-root :: Tree a -> a
+root :: BinomialTree a -> a
 root (NODE _ x _) = x
 
-link :: Ord a => Tree a -> Tree a -> Tree a
+link :: Ord a => BinomialTree a -> BinomialTree a -> BinomialTree a
 link t1@(NODE r x1 c1) t2@(NODE _ x2 c2)
     | x1 <= x2  = NODE (r + 1) x1 (t2 : c1)
     | otherwise = NODE (r + 1) x2 (t1 : c2)
 
-insTree :: Ord a => Tree a -> [Tree a] -> [Tree a]
-insTree t []                              = [t]
+insTree :: Ord a => BinomialTree a -> [BinomialTree a] -> [BinomialTree a]
+insTree t []             = [t]
 insTree t ts@(t' : ts')
-    | rankT t < rankT t' = t : ts
-    | otherwise          = insTree (link t t') ts'
+    | rankT t < rankT t' = trace "insTree" $ t : ts
+    | otherwise          = trace "insTree" $ insTree (link t t') ts'
 
-mrg :: Ord a => [Tree a] -> [Tree a] -> [Tree a]
+mrg :: Ord a => [BinomialTree a] -> [BinomialTree a] -> [BinomialTree a]
 mrg ts1 []  = ts1
 mrg []  ts2 = ts2
 mrg ts1@(t1 : ts1') ts2@(t2 : ts2')
-    | rankT t1 < rankT t2 = t1 : mrg ts1' ts2
-    | rankT t2 < rankT t1 = t2 : mrg ts1  ts2'
-    | otherwise           = insTree (link t1 t2) (mrg ts1' ts2')
+    | rankT t1 < rankT t2 = trace "mrg" $ t1 : mrg ts1' ts2
+    | rankT t2 < rankT t1 = trace "mrg" $ t2 : mrg ts1  ts2'
+    | otherwise           = trace "mrg" $ insTree (link t1 t2) (mrg ts1' ts2')
 
-removeMinTree :: Ord a => [Tree a] -> (Tree a, [Tree a])
+removeMinTree :: Ord a => [BinomialTree a] -> (BinomialTree a, [BinomialTree a])
 removeMinTree [t]  = (t, [])
 removeMinTree (t : ts)
     | root t < root t' = (t, ts)
     | otherwise        = (t', t : ts')
   where (t', ts') = removeMinTree ts
+
+treeLines :: Show a => BinomialTree a -> [String]
+treeLines (NODE _ x cs) = show x : childLines cs
+
+childLines :: Show a => [BinomialTree a] -> [String]
+childLines []     = []
+childLines [c]    = indented "└─ " "   " (treeLines c)
+childLines (c:cs) = indented "├─ " "│  " (treeLines c) ++ childLines cs
+
+indented :: String -> String -> [String] -> [String]
+indented _     _    []     = []
+indented first rest (l:ls) = (first ++ l) : map (rest ++) ls
+
+instance Show a => Show (BinomialTree a) where
+    show = unlines . treeLines
+
+instance Show a => Show (BinomialHeap a) where
+    show (BH ts) = concatMap (\t -> show t ++ "\n") ts
 
 instance Ord a => Heap BinomialHeap a where
     empty = BH []
@@ -85,3 +105,5 @@ instance Ord a => Heap BinomialHeap a where
 
     deleteMin (BH ts) = BH (mrg (reverse ts1) ts2)
       where (NODE _ _ ts1, ts2) = removeMinTree ts
+
+example = foldr insert (empty :: BinomialHeap Int) [1..42]
