@@ -63,7 +63,8 @@ fromInt n = incr (fromInt (n - 1))
 
 test :: Natural n => [(String, n)]
 test =
-    let testInc = map (\i -> (show i, fromInt i)) [0..13]
+    let padTo7 s = replicate (7 - length s) ' ' ++ s in
+    let testInc = map (\i -> (padTo7 (show i), fromInt i)) [0..13]
         testDec = ("decr 14", decr (fromInt 14))
         testAdd = ("add 6 7", add (fromInt 6) (fromInt 7))
     in
@@ -238,3 +239,15 @@ instance PowerTwo t => RandomAccessList (ZerolessList t) where
     append _ _       = error "za na vaje"
     lookup _ _       = error "za na vaje"
     update _ _ _     = error "za na vaje"
+
+---
+
+main =
+    let printTest (s, n) = putStrLn $ "  " ++ s ++ " = " ++ show n
+     in do
+        putStrLn "Peanova naravna števila"
+        mapM_ printTest testPeano
+        putStrLn "Dvojiški zapis"
+        mapM_ printTest testBinary
+        putStrLn "Dvojiški zapis brez ničel"
+        mapM_ printTest testZLBinary
