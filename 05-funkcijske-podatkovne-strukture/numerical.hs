@@ -1,10 +1,11 @@
 import Prelude hiding (head, tail, lookup)
+import Data.List (intercalate)
 
 data Peano = Zero | Succ Peano
 
 instance Show Peano where
-    show Zero     = "Z"
-    show (Succ n) = "S " ++ show n
+    show Zero     = "0"
+    show (Succ n) = "1+" ++ show n
 
 decrPeano (Succ n) = n
 
@@ -26,9 +27,20 @@ appendList (Cons x xs) ys = Cons x (appendList xs ys)
 data Bit = O | I
 newtype Binary = Bin [Bit]
 
-instance Show Binary where
-    show (Bin ds) = concatMap showBit (reverse ds) ++ "₂"
+powerOfTwo :: Int -> String
+powerOfTwo 0 = "⁰"
+powerOfTwo n =
+    map ("⁰¹²³⁴⁵⁶⁷⁸⁹" !!) (digits n)
       where
+        digits 0 = []
+        digits n = digits (n `div` 10) ++ [n `mod` 10]
+
+instance Show Binary where
+    show (Bin ds) =
+       concatMap showBit (reverse ds) ++ "₂"
+       ++ " = " ++
+       intercalate " + " (zipWith (\i d -> showBit d ++ "⋅2" ++ powerOfTwo i) [0..] ds)
+       where
         showBit I = "1"
         showBit O = "0"
 
@@ -202,7 +214,10 @@ data ZLBit = One | Two
 newtype ZLBinary = ZBin [ZLBit]
 
 instance Show ZLBinary where
-    show (ZBin ds) = concatMap showZLBit (reverse ds) ++ "₂"
+    show (ZBin ds) =
+       concatMap showZLBit (reverse ds) ++ "₂"
+       ++ " = " ++
+       intercalate " + " (zipWith (\i d -> showZLBit d ++ "⋅2" ++ powerOfTwo i) [0..] ds)
       where
         showZLBit One = "1"
         showZLBit Two = "2"
