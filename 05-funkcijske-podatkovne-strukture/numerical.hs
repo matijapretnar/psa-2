@@ -346,6 +346,135 @@ testZerolessList = testRandomAccessList
 
 ---
 
+newtype SkewBinary = SBin [Int]
+
+instance Show SkewBinary where
+    show (SBin ws) =
+       intercalate " + " (map show ws)
+       
+
+incSkewBits :: [Int] -> [Int]
+incSkewBits (w1:w2:ws) | w1 == w2 = (1 + w1 + w2):ws
+incSkewBits ws = 1:ws
+
+decSkewBits :: [Int] -> [Int]
+decSkewBits (1:ws) = ws
+decSkewBits (w:ws) = (w `div` 2) : (w `div` 2) : ws
+
+addSkewBits :: [Int] -> [Int] -> [Int]
+addSkewBits []        ds2       = ds2
+addSkewBits ds1       ds2       = incSkewBits (addSkewBits (decSkewBits ds1) ds2)
+
+instance Natural SkewBinary where
+    zero                      = SBin []
+    incr (SBin ds)            = SBin (incSkewBits ds)
+    decr (SBin ds)            = SBin (decSkewBits ds)
+    add (SBin ds1) (SBin ds2) = SBin (addSkewBits ds1 ds2)
+
+testSkewBinary :: [(String, SkewBinary)]
+testSkewBinary = testNatural
+
+---
+
+class PowerTwoMinusOne t where
+    empty        :: t a
+    linkPow2_1   :: a -> t a -> t a -> t a
+    sizePow2_1   :: t a -> Int
+    splitPow2_1  :: t a -> (a, t a, t a)
+    lookupPow2_1 :: Int -> t a -> a
+    updatePow2_1 :: Int -> a -> t a -> t a
+
+data NodeTree a = Leaf2 | Node2 Int a (NodeTree a) (NodeTree a) deriving Show
+
+instance PowerTwoMinusOne NodeTree where
+    empty                             = Leaf2
+    linkPow2_1 x t1 t2                = Node2 (sizePow2_1 t1 + sizePow2_1 t2 + 1) x t1 t2
+    sizePow2_1 (Leaf2)                 = 0
+    sizePow2_1 (Node2 w _ _ _)         = w
+    splitPow2_1 (Node2 _ x t1 t2)      = (x, t1, t2)
+    lookupPow2_1 0 (Node2 w x _ _)     = x
+    lookupPow2_1 i (Node2 w _ t1 t2)
+        | i <= w `div` 2               = lookupPow2_1 (i - 1) t1
+        | otherwise                    = lookupPow2_1 (i - (w `div` 2) - 1) t2
+    updatePow2_1 0 y (Node2 w x t1 t2) = Node2 w y t1 t2
+    updatePow2_1 i y (Node2 w x t1 t2)
+        | i <= w `div` 2               = Node2 w x (updatePow2_1 (i - 1) y t1) t2
+        | otherwise                    = Node2 w x t1 (updatePow2_1 (i - (w `div` 2) - 1) y t2)
+
+---
+
+newtype SkewList t a = SL [(Int, t a)] deriving Show
+
+consSparsePow :: PowerTwoMinusOne t => a -> [(Int, t a)] -> [(Int, t a)]
+consSparsePow x ((w1, t1) : (w2, t2) : wts) | w1 == w2 = (w1 + w2 + 1, linkPow2_1 x t1 t2) : wts
+consSparsePow x wts = (1, linkPow2_1 x empty empty) : wts
+
+unconsSparsePow :: PowerTwoMinusOne t => [(Int, t a)] -> (a, [(Int, t a)])
+unconsSparsePow ((1, t) : wts) = (x, wts) where (x, _, _) = splitPow2_1 t
+unconsSparsePow ((w, t) : wts) = (x, (w `div` 2, t1) : (w `div` 2, t2) : wts) where (x, t1, t2) = splitPow2_1 t
+
+appendSparsePow :: PowerTwoMinusOne t => [(Int, t a)] -> [(Int, t a)] -> [(Int, t a)]
+appendSparsePow []      ds2      = ds2
+appendSparsePow ds1     ds2      = let (d, ds1') = unconsSparsePow ds1
+                                   in  consSparsePow d (appendSparsePow ds1' ds2)
+
+instance PowerTwoMinusOne t => RandomAccessList (SkewList t) where
+    nil                      = SL []
+    cons x (SL wts)           = SL (consSparsePow x wts)
+    head (SL ((_, t) : _))   = x where (x, _, _) = splitPow2_1 t
+    tail (SL wts)             = SL wts'       where (_, wts') = unconsSparsePow wts
+    append (SL wts1) (SL wts2) = SL (appendSparsePow wts1 wts2)
+
+    lookup i (SL wts) = look i wts
+      where
+        look i ((w, t) : wts)
+            | i < w = lookupPow2_1 i t
+            | otherwise       = look (i - w) wts
+    update i y (SL wts) = SL (upd i wts)
+      where
+        upd i ((w, t) : wts)
+            | i < w = (w, updatePow2_1 i y t) : wts
+            | otherwise = (w, t) : upd (i - w) wts
+    size (SL wts) = sum [w | (w, _) <- wts]
+
+testSkewList :: [(String, SkewList NodeTree Int)]
+testSkewList = testRandomAccessList
+
+---
+
+data IncreasingList a = IncEmpty | IncCons a (IncreasingList (a, a))
+
+zipIncreasing :: IncreasingList a -> IncreasingList a -> IncreasingList (a, a)
+zipIncreasing IncEmpty IncEmpty = IncEmpty
+zipIncreasing (IncCons x xs) (IncCons y ys) = IncCons (x, y) (zipIncreasing xs ys)
+
+unzipInc :: IncreasingList (a, a) -> (IncreasingList a, IncreasingList a)
+unzipInc IncEmpty = (IncEmpty, IncEmpty)
+unzipInc (IncCons (x, y) t) =
+    let (t1, t2) = unzipInc t in (IncCons x t1, IncCons y t2)
+
+instance PowerTwoMinusOne IncreasingList where
+    empty                             = IncEmpty
+    linkPow2_1 x t1 t2                = IncCons x (zipIncreasing t1 t2)
+    sizePow2_1 IncEmpty                   = 0
+    sizePow2_1 (IncCons _ t)              = 1 + 2 * sizePow2_1 t
+    splitPow2_1 (IncCons x t)             = let (t1, t2) = unzipInc t in (x, t1, t2)
+    lookupPow2_1 0 (IncCons x _)     = x
+    lookupPow2_1 i (IncCons _ ts)    =
+        let (t1, t2) = unzipInc ts in
+        let w = sizePow2_1 t1 in
+        if i <= w then lookupPow2_1 (i - 1) t1 else lookupPow2_1 (i - w - 1) t2
+    updatePow2_1 0 y (IncCons x t) = IncCons y t
+    updatePow2_1 i y (IncCons x t) =
+        let (t1, t2) = unzipInc t in
+        let w = sizePow2_1 t1 in
+        if i <= w then linkPow2_1 y (updatePow2_1 (i - 1) y t1) t2 else linkPow2_1 x t1 (updatePow2_1 (i - w - 1) y t2)
+
+testIncreasingList :: [(String, SkewList IncreasingList Int)]
+testIncreasingList = testRandomAccessList
+
+---
+
 main =
     let printNumTest (s, n) = putStrLn $ "  " ++ s ++ " = " ++ show n
         printListTest (s, xs) = putStrLn $ "  " ++ s ++ " = " ++ show (map (`lookup` xs) [0 .. size xs - 1])
@@ -356,9 +485,15 @@ main =
         mapM_ printNumTest testBinary
         putStrLn "Dvojiški zapis brez ničel"
         mapM_ printNumTest testZLBinary
+        putStrLn "Poševni dvojiški zapis"
+        mapM_ printNumTest testSkewBinary
         putStrLn "Verižni seznami"
         mapM_ printListTest testList
         putStrLn "Zaporedja"
         mapM_ printListTest testSequence
         putStrLn "Zaporedja brez ničel"
         mapM_ printListTest testZerolessList
+        putStrLn "Poševni seznami"
+        mapM_ printListTest testSkewList
+        putStrLn "Naraščajoči seznami"
+        mapM_ printListTest testIncreasingList
