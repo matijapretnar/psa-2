@@ -8,10 +8,10 @@ import RandomAccessList.List (List)
 import Pow2.LeafTree (LeafTree)
 import Pow2_1.NodeTree (NodeTree)
 import Pow2_1.IncreasingList (IncreasingList)
-import Pow2_1 (Pow2_1)
 import RandomAccessList.Sequence (Sequence)
 import RandomAccessList.Skew (SkewList)
 import RandomAccessList.Zeroless (ZerolessList)
+import RandomAccessList.Bootstrapping (Bootstrapping)
 
 testNatural :: (Natural n) => [(String, n)]
 testNatural =
@@ -52,3 +52,5 @@ main =
         mapM_ printListTest (testList :: [(String, SkewList NodeTree Int)])
         putStrLn "Naraščajoči seznami"
         mapM_ printListTest (testList :: [(String, SkewList IncreasingList Int)])
+        putStrLn "Naraščajoči seznami"
+        mapM_ printListTest (testList :: [(String, Bootstrapping Int)])
