@@ -6,12 +6,12 @@ where
 import Data.List (intercalate)
 import Natural
 
-data Bit = One | Two
+data Digit = One | Two
 
-newtype ZerolessBinary = Bits [Bit]
+newtype ZerolessBinary = Digits [Digit]
 
 instance Show ZerolessBinary where
-  show (Bits ds) =
+  show (Digits ds) =
     concatMap showBit (reverse ds)
       ++ "₂"
       ++ " = "
@@ -20,26 +20,26 @@ instance Show ZerolessBinary where
       showBit One = "1"
       showBit Two = "2"
 
-incrBits :: [Bit] -> [Bit]
-incrBits [] = [One]
-incrBits (One : ds) = Two : ds
-incrBits (Two : ds) = One : incrBits ds
+incrDigits :: [Digit] -> [Digit]
+incrDigits [] = [One]
+incrDigits (One : ds) = Two : ds
+incrDigits (Two : ds) = One : incrDigits ds
 
-decrBits :: [Bit] -> [Bit]
-decrBits [One] = []
-decrBits (Two : ds) = One : ds
-decrBits (One : ds) = Two : decrBits ds
+decrDigits :: [Digit] -> [Digit]
+decrDigits [One] = []
+decrDigits (Two : ds) = One : ds
+decrDigits (One : ds) = Two : decrDigits ds
 
-addBits :: [Bit] -> [Bit] -> [Bit]
-addBits [] ds2 = ds2
-addBits ds1 [] = ds1
-addBits (One : ds1) (One : ds2) = Two : addBits ds1 ds2
-addBits (One : ds1) (Two : ds2) = One : incrBits (addBits ds1 ds2)
-addBits (Two : ds1) (One : ds2) = One : incrBits (addBits ds1 ds2)
-addBits (Two : ds1) (Two : ds2) = Two : incrBits (addBits ds1 ds2)
+addDigits :: [Digit] -> [Digit] -> [Digit]
+addDigits [] ds2 = ds2
+addDigits ds1 [] = ds1
+addDigits (One : ds1) (One : ds2) = Two : addDigits ds1 ds2
+addDigits (One : ds1) (Two : ds2) = One : incrDigits (addDigits ds1 ds2)
+addDigits (Two : ds1) (One : ds2) = One : incrDigits (addDigits ds1 ds2)
+addDigits (Two : ds1) (Two : ds2) = Two : incrDigits (addDigits ds1 ds2)
 
 instance Natural ZerolessBinary where
-  zero = Bits []
-  incr (Bits ds) = Bits (incrBits ds)
-  decr (Bits ds) = Bits (decrBits ds)
-  add (Bits ds1) (Bits ds2) = Bits (addBits ds1 ds2)
+  zero = Digits []
+  incr (Digits ds) = Digits (incrDigits ds)
+  decr (Digits ds) = Digits (decrDigits ds)
+  add (Digits ds1) (Digits ds2) = Digits (addDigits ds1 ds2)

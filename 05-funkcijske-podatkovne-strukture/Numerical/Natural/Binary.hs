@@ -6,12 +6,12 @@ where
 import Data.List (intercalate)
 import Natural
 
-data Bit = Zero | One
+data Digit = Zero | One
 
-newtype Binary = Bin [Bit]
+newtype Binary = Digits [Digit]
 
 instance Show Binary where
-  show (Bin ds) =
+  show (Digits ds) =
     concatMap showBit (reverse ds)
       ++ "₂"
       ++ " = "
@@ -20,25 +20,25 @@ instance Show Binary where
       showBit Zero = "0"
       showBit One = "1"
 
-incrBits :: [Bit] -> [Bit]
-incrBits [] = [One]
-incrBits (Zero : ds) = One : ds
-incrBits (One : ds) = Zero : incrBits ds
+incrDigits :: [Digit] -> [Digit]
+incrDigits [] = [One]
+incrDigits (Zero : ds) = One : ds
+incrDigits (One : ds) = Zero : incrDigits ds
 
-decrBits :: [Bit] -> [Bit]
-decrBits [One] = []
-decrBits (One : ds) = Zero : ds
-decrBits (Zero : ds) = One : decrBits ds
+decrDigits :: [Digit] -> [Digit]
+decrDigits [One] = []
+decrDigits (One : ds) = Zero : ds
+decrDigits (Zero : ds) = One : decrDigits ds
 
-addBits :: [Bit] -> [Bit] -> [Bit]
-addBits [] ds2 = ds2
-addBits ds1 [] = ds1
-addBits (Zero : ds1) (d : ds2) = d : addBits ds1 ds2
-addBits (d : ds1) (Zero : ds2) = d : addBits ds1 ds2
-addBits (One : ds1) (One : ds2) = Zero : incrBits (addBits ds1 ds2)
+addDigits :: [Digit] -> [Digit] -> [Digit]
+addDigits [] ds2 = ds2
+addDigits ds1 [] = ds1
+addDigits (Zero : ds1) (d : ds2) = d : addDigits ds1 ds2
+addDigits (d : ds1) (Zero : ds2) = d : addDigits ds1 ds2
+addDigits (One : ds1) (One : ds2) = Zero : incrDigits (addDigits ds1 ds2)
 
 instance Natural Binary where
-  zero = Bin []
-  incr (Bin ds) = Bin (incrBits ds)
-  decr (Bin ds) = Bin (decrBits ds)
-  add (Bin ds1) (Bin ds2) = Bin (addBits ds1 ds2)
+  zero = Digits []
+  incr (Digits ds) = Digits (incrDigits ds)
+  decr (Digits ds) = Digits (decrDigits ds)
+  add (Digits ds1) (Digits ds2) = Digits (addDigits ds1 ds2)

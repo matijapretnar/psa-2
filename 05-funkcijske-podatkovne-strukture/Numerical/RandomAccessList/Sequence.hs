@@ -4,7 +4,6 @@ module RandomAccessList.Sequence
 where
 
 import RandomAccessList
-import Prelude hiding (head, lookup, tail)
 
 newtype Sequence a = Sequence (Int, Int -> a)
 

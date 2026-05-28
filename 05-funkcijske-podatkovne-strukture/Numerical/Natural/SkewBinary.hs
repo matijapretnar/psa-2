@@ -6,25 +6,25 @@ where
 import Data.List (intercalate)
 import Natural
 
-newtype SkewBinary = Bits [Int]
+newtype SkewBinary = Weights [Int]
 
 instance Show SkewBinary where
-  show (Bits ws) = intercalate " + " (map show ws)
+  show (Weights ws) = intercalate " + " (map show ws)
 
-incrBits :: [Int] -> [Int]
-incrBits (w1 : w2 : ws) | w1 == w2 = (1 + w1 + w2) : ws
-incrBits ws = 1 : ws
+incrWeights :: [Int] -> [Int]
+incrWeights (w1 : w2 : ws) | w1 == w2 = (1 + w1 + w2) : ws
+incrWeights ws = 1 : ws
 
-decrBits :: [Int] -> [Int]
-decrBits (1 : ws) = ws
-decrBits (w : ws) = (w `div` 2) : (w `div` 2) : ws
+decrWeights :: [Int] -> [Int]
+decrWeights (1 : ws) = ws
+decrWeights (w : ws) = (w `div` 2) : (w `div` 2) : ws
 
-addBits :: [Int] -> [Int] -> [Int]
-addBits [] ds2 = ds2
-addBits ds1 ds2 = incrBits (addBits (decrBits ds1) ds2)
+addWeights :: [Int] -> [Int] -> [Int]
+addWeights [] ds2 = ds2
+addWeights ds1 ds2 = incrWeights (addWeights (decrWeights ds1) ds2)
 
 instance Natural SkewBinary where
-  zero = Bits []
-  incr (Bits ds) = Bits (incrBits ds)
-  decr (Bits ds) = Bits (decrBits ds)
-  add (Bits ds1) (Bits ds2) = Bits (addBits ds1 ds2)
+  zero = Weights []
+  incr (Weights ds) = Weights (incrWeights ds)
+  decr (Weights ds) = Weights (decrWeights ds)
+  add (Weights ds1) (Weights ds2) = Weights (addWeights ds1 ds2)
