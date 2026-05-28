@@ -9,7 +9,7 @@ import Prelude hiding (head, lookup, tail)
 
 newtype SkewList t a = SL [a]
 
-instance (Pow2_1 t) => RandomAccessList (SkewList t) where
+instance Pow2_1 t => RandomAccessList (SkewList t) where
   nil = SL []
   cons x (SL xs) = SL (x : xs)
   uncons (SL []) = Nothing

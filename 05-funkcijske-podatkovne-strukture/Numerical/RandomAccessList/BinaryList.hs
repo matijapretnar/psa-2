@@ -24,7 +24,7 @@ unconsDigit (Zero : ds) = (t1, One t2 : ds')
     (t', ds') = unconsDigit ds
     (t1, t2) = splitTree t'
 
-instance (Pow2 t) => RandomAccessList (BinaryList t) where
+instance Pow2 t => RandomAccessList (BinaryList t) where
   nil = BL []
   cons x (BL ds) = BL (consDigit (singleton x) ds)
   uncons (BL []) = Nothing

@@ -24,7 +24,7 @@ unconsDigits (One t : ds) = (t, Two ta tb : ds')
     (t', ds') = unconsDigits ds
     (ta, tb) = splitTree t'
 
-instance (Pow2 t) => RandomAccessList (ZerolessList t) where
+instance Pow2 t => RandomAccessList (ZerolessList t) where
   nil = Digits []
   cons x (Digits ds) = Digits (consDigits (singleton x) ds)
   uncons (Digits []) = Nothing
