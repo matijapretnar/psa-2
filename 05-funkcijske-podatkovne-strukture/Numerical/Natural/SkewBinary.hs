@@ -1,6 +1,5 @@
 module Natural.SkewBinary
   ( SkewBinary,
-    testSkewBinary,
   )
 where
 
@@ -12,23 +11,20 @@ newtype SkewBinary = SBin [Int]
 instance Show SkewBinary where
   show (SBin ws) = intercalate " + " (map show ws)
 
-inc :: [Int] -> [Int]
-inc (w1 : w2 : ws) | w1 == w2 = (1 + w1 + w2) : ws
-inc ws = 1 : ws
+incrBits :: [Int] -> [Int]
+incrBits (w1 : w2 : ws) | w1 == w2 = (1 + w1 + w2) : ws
+incrBits ws = 1 : ws
 
-dec :: [Int] -> [Int]
-dec (1 : ws) = ws
-dec (w : ws) = (w `div` 2) : (w `div` 2) : ws
+decrBits :: [Int] -> [Int]
+decrBits (1 : ws) = ws
+decrBits (w : ws) = (w `div` 2) : (w `div` 2) : ws
 
 addBits :: [Int] -> [Int] -> [Int]
 addBits [] ds2 = ds2
-addBits ds1 ds2 = inc (addBits (dec ds1) ds2)
+addBits ds1 ds2 = incrBits (addBits (decrBits ds1) ds2)
 
 instance Natural SkewBinary where
   zero = SBin []
-  incr (SBin ds) = SBin (inc ds)
-  decr (SBin ds) = SBin (dec ds)
+  incr (SBin ds) = SBin (incrBits ds)
+  decr (SBin ds) = SBin (decrBits ds)
   add (SBin ds1) (SBin ds2) = SBin (addBits ds1 ds2)
-
-testSkewBinary :: [(String, SkewBinary)]
-testSkewBinary = testNatural

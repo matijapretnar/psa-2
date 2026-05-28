@@ -1,6 +1,5 @@
 module Natural.ZerolessBinary
   ( ZLBinary,
-    testZLBinary,
   )
 where
 
@@ -21,29 +20,26 @@ instance Show ZLBinary where
       showBit One = "1"
       showBit Two = "2"
 
-inc :: [Bit] -> [Bit]
-inc [] = [One]
-inc (One : ds) = Two : ds
-inc (Two : ds) = One : inc ds
+incrBits :: [Bit] -> [Bit]
+incrBits [] = [One]
+incrBits (One : ds) = Two : ds
+incrBits (Two : ds) = One : incrBits ds
 
-dec :: [Bit] -> [Bit]
-dec [One] = []
-dec (Two : ds) = One : ds
-dec (One : ds) = Two : dec ds
+decrBits :: [Bit] -> [Bit]
+decrBits [One] = []
+decrBits (Two : ds) = One : ds
+decrBits (One : ds) = Two : decrBits ds
 
 addBits :: [Bit] -> [Bit] -> [Bit]
 addBits [] ds2 = ds2
 addBits ds1 [] = ds1
 addBits (One : ds1) (One : ds2) = Two : addBits ds1 ds2
-addBits (One : ds1) (Two : ds2) = One : inc (addBits ds1 ds2)
-addBits (Two : ds1) (One : ds2) = One : inc (addBits ds1 ds2)
-addBits (Two : ds1) (Two : ds2) = Two : inc (addBits ds1 ds2)
+addBits (One : ds1) (Two : ds2) = One : incrBits (addBits ds1 ds2)
+addBits (Two : ds1) (One : ds2) = One : incrBits (addBits ds1 ds2)
+addBits (Two : ds1) (Two : ds2) = Two : incrBits (addBits ds1 ds2)
 
 instance Natural ZLBinary where
   zero = ZBin []
-  incr (ZBin ds) = ZBin (inc ds)
-  decr (ZBin ds) = ZBin (dec ds)
+  incr (ZBin ds) = ZBin (incrBits ds)
+  decr (ZBin ds) = ZBin (decrBits ds)
   add (ZBin ds1) (ZBin ds2) = ZBin (addBits ds1 ds2)
-
-testZLBinary :: [(String, ZLBinary)]
-testZLBinary = testNatural

@@ -3,20 +3,20 @@ module RandomAccessList.Binary
   )
 where
 
-import Prelude hiding (head, lookup, tail)
 import RandomAccessList
 import RandomAccessList.PowerTwo
+import Prelude hiding (head, lookup, tail)
 
 data Digit t a = D0 | D1 (t a) deriving (Show)
 
 newtype BinaryList t a = BL [Digit t a] deriving (Show)
 
-consDigit :: PowerTwo t => t a -> [Digit t a] -> [Digit t a]
+consDigit :: (PowerTwo t) => t a -> [Digit t a] -> [Digit t a]
 consDigit t [] = [D1 t]
 consDigit t (D0 : ds) = D1 t : ds
 consDigit t (D1 t' : ds) = D0 : consDigit (linkPow2 t t') ds
 
-unconsDigit :: PowerTwo t => [Digit t a] -> (t a, [Digit t a])
+unconsDigit :: (PowerTwo t) => [Digit t a] -> (t a, [Digit t a])
 unconsDigit [D1 t] = (t, [])
 unconsDigit (D1 t : ds) = (t, D0 : ds)
 unconsDigit (D0 : ds) = (t1, D1 t2 : ds')
@@ -24,13 +24,13 @@ unconsDigit (D0 : ds) = (t1, D1 t2 : ds')
     (t', ds') = unconsDigit ds
     (t1, t2) = splitPow2 t'
 
-appendDigits :: PowerTwo t => [Digit t a] -> [Digit t a] -> [Digit t a]
+appendDigits :: (PowerTwo t) => [Digit t a] -> [Digit t a] -> [Digit t a]
 appendDigits [] ds2 = ds2
 appendDigits ds1 ds2 =
   let (d, ds1') = unconsDigit ds1
    in consDigit d (appendDigits ds1' ds2)
 
-instance PowerTwo t => RandomAccessList (BinaryList t) where
+instance (PowerTwo t) => RandomAccessList (BinaryList t) where
   nil = BL []
   cons x (BL ds) = BL (consDigit (singleton x) ds)
   head (BL (D1 d : _)) = lookupPow2 0 d

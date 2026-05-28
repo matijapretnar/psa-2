@@ -1,11 +1,10 @@
 module RandomAccessList.List
   ( List,
-    testList,
   )
 where
 
-import Prelude hiding (head, lookup, tail)
 import RandomAccessList
+import Prelude hiding (head, lookup, tail)
 
 data List a = Nil | Cons a (List a) deriving (Show)
 
@@ -29,6 +28,3 @@ instance RandomAccessList List where
   update i y (Cons x xs) = Cons x (update (i - 1) y xs)
   size Nil = 0
   size (Cons _ xs) = 1 + size xs
-
-testList :: [(String, List Int)]
-testList = testRandomAccessList

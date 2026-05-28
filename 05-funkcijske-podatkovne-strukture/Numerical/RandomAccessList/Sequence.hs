@@ -1,11 +1,10 @@
 module RandomAccessList.Sequence
   ( Sequence,
-    testSequence,
   )
 where
 
-import Prelude hiding (head, lookup, tail)
 import RandomAccessList
+import Prelude hiding (head, lookup, tail)
 
 newtype Sequence a = Sequence (Int, Int -> a)
 
@@ -19,6 +18,3 @@ instance RandomAccessList Sequence where
   lookup i (Sequence (_, f)) = f i
   update i y (Sequence (n, f)) = Sequence (n, \j -> if i == j then y else f j)
   size (Sequence (n, _)) = n
-
-testSequence :: [(String, Sequence Int)]
-testSequence = testRandomAccessList

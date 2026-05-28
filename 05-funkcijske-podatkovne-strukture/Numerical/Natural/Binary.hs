@@ -1,6 +1,5 @@
 module Natural.Binary
   ( Binary,
-    testBinary,
   )
 where
 
@@ -21,28 +20,25 @@ instance Show Binary where
       showBit I = "1"
       showBit O = "0"
 
-inc :: [Bit] -> [Bit]
-inc [] = [I]
-inc (O : ds) = I : ds
-inc (I : ds) = O : inc ds
+incrBits :: [Bit] -> [Bit]
+incrBits [] = [I]
+incrBits (O : ds) = I : ds
+incrBits (I : ds) = O : incrBits ds
 
-dec :: [Bit] -> [Bit]
-dec [I] = []
-dec (I : ds) = O : ds
-dec (O : ds) = I : dec ds
+decrBits :: [Bit] -> [Bit]
+decrBits [I] = []
+decrBits (I : ds) = O : ds
+decrBits (O : ds) = I : decrBits ds
 
 addBits :: [Bit] -> [Bit] -> [Bit]
 addBits [] ds2 = ds2
 addBits ds1 [] = ds1
 addBits (O : ds1) (d : ds2) = d : addBits ds1 ds2
 addBits (d : ds1) (O : ds2) = d : addBits ds1 ds2
-addBits (I : ds1) (I : ds2) = O : inc (addBits ds1 ds2)
+addBits (I : ds1) (I : ds2) = O : incrBits (addBits ds1 ds2)
 
 instance Natural Binary where
   zero = Bin []
-  incr (Bin ds) = Bin (inc ds)
-  decr (Bin ds) = Bin (dec ds)
+  incr (Bin ds) = Bin (incrBits ds)
+  decr (Bin ds) = Bin (decrBits ds)
   add (Bin ds1) (Bin ds2) = Bin (addBits ds1 ds2)
-
-testBinary :: [(String, Binary)]
-testBinary = testNatural
