@@ -6,7 +6,7 @@ where
 import Data.List (intercalate)
 import Natural
 
-data Bit = O | I
+data Bit = Zero | One
 
 newtype Binary = Bin [Bit]
 
@@ -17,25 +17,25 @@ instance Show Binary where
       ++ " = "
       ++ intercalate " + " (zipWith (\i d -> showBit d ++ "⋅2" ++ powerOfTwo i) [0 ..] ds)
     where
-      showBit I = "1"
-      showBit O = "0"
+      showBit Zero = "0"
+      showBit One = "1"
 
 incrBits :: [Bit] -> [Bit]
-incrBits [] = [I]
-incrBits (O : ds) = I : ds
-incrBits (I : ds) = O : incrBits ds
+incrBits [] = [One]
+incrBits (Zero : ds) = One : ds
+incrBits (One : ds) = Zero : incrBits ds
 
 decrBits :: [Bit] -> [Bit]
-decrBits [I] = []
-decrBits (I : ds) = O : ds
-decrBits (O : ds) = I : decrBits ds
+decrBits [One] = []
+decrBits (One : ds) = Zero : ds
+decrBits (Zero : ds) = One : decrBits ds
 
 addBits :: [Bit] -> [Bit] -> [Bit]
 addBits [] ds2 = ds2
 addBits ds1 [] = ds1
-addBits (O : ds1) (d : ds2) = d : addBits ds1 ds2
-addBits (d : ds1) (O : ds2) = d : addBits ds1 ds2
-addBits (I : ds1) (I : ds2) = O : incrBits (addBits ds1 ds2)
+addBits (Zero : ds1) (d : ds2) = d : addBits ds1 ds2
+addBits (d : ds1) (Zero : ds2) = d : addBits ds1 ds2
+addBits (One : ds1) (One : ds2) = Zero : incrBits (addBits ds1 ds2)
 
 instance Natural Binary where
   zero = Bin []

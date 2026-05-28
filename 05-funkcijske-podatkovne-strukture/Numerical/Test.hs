@@ -37,7 +37,7 @@ main =
         putStrLn "Dvojiški zapis"
         mapM_ printNumTest (testNatural :: [(String, Natural.Binary.Binary)])
         putStrLn "Dvojiški zapis brez ničel"
-        mapM_ printNumTest (testNatural :: [(String, Natural.ZerolessBinary.ZLBinary)])
+        mapM_ printNumTest (testNatural :: [(String, Natural.ZerolessBinary.ZerolessBinary)])
         putStrLn "Poševni dvojiški zapis"
         mapM_ printNumTest (testNatural :: [(String, Natural.SkewBinary.SkewBinary)])
         putStrLn "Verižni seznami"

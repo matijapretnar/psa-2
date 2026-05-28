@@ -1,5 +1,5 @@
 module Natural.ZerolessBinary
-  ( ZLBinary,
+  ( ZerolessBinary,
   )
 where
 
@@ -8,10 +8,10 @@ import Natural
 
 data Bit = One | Two
 
-newtype ZLBinary = ZBin [Bit]
+newtype ZerolessBinary = Bits [Bit]
 
-instance Show ZLBinary where
-  show (ZBin ds) =
+instance Show ZerolessBinary where
+  show (Bits ds) =
     concatMap showBit (reverse ds)
       ++ "₂"
       ++ " = "
@@ -38,8 +38,8 @@ addBits (One : ds1) (Two : ds2) = One : incrBits (addBits ds1 ds2)
 addBits (Two : ds1) (One : ds2) = One : incrBits (addBits ds1 ds2)
 addBits (Two : ds1) (Two : ds2) = Two : incrBits (addBits ds1 ds2)
 
-instance Natural ZLBinary where
-  zero = ZBin []
-  incr (ZBin ds) = ZBin (incrBits ds)
-  decr (ZBin ds) = ZBin (decrBits ds)
-  add (ZBin ds1) (ZBin ds2) = ZBin (addBits ds1 ds2)
+instance Natural ZerolessBinary where
+  zero = Bits []
+  incr (Bits ds) = Bits (incrBits ds)
+  decr (Bits ds) = Bits (decrBits ds)
+  add (Bits ds1) (Bits ds2) = Bits (addBits ds1 ds2)

@@ -6,10 +6,10 @@ where
 import Data.List (intercalate)
 import Natural
 
-newtype SkewBinary = SBin [Int]
+newtype SkewBinary = Bits [Int]
 
 instance Show SkewBinary where
-  show (SBin ws) = intercalate " + " (map show ws)
+  show (Bits ws) = intercalate " + " (map show ws)
 
 incrBits :: [Int] -> [Int]
 incrBits (w1 : w2 : ws) | w1 == w2 = (1 + w1 + w2) : ws
@@ -24,7 +24,7 @@ addBits [] ds2 = ds2
 addBits ds1 ds2 = incrBits (addBits (decrBits ds1) ds2)
 
 instance Natural SkewBinary where
-  zero = SBin []
-  incr (SBin ds) = SBin (incrBits ds)
-  decr (SBin ds) = SBin (decrBits ds)
-  add (SBin ds1) (SBin ds2) = SBin (addBits ds1 ds2)
+  zero = Bits []
+  incr (Bits ds) = Bits (incrBits ds)
+  decr (Bits ds) = Bits (decrBits ds)
+  add (Bits ds1) (Bits ds2) = Bits (addBits ds1 ds2)
