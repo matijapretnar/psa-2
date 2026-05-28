@@ -41,5 +41,6 @@ addDigits (Two : ds1) (Two : ds2) = Two : incrDigits (addDigits ds1 ds2)
 instance Natural ZerolessBinary where
   zero = Digits []
   incr (Digits ds) = Digits (incrDigits ds)
-  decr (Digits ds) = Digits (decrDigits ds)
+  decr (Digits []) = Nothing
+  decr (Digits ds) = Just (Digits (decrDigits ds))
   add (Digits ds1) (Digits ds2) = Digits (addDigits ds1 ds2)

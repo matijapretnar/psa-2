@@ -40,5 +40,6 @@ addDigits (One : ds1) (One : ds2) = Zero : incrDigits (addDigits ds1 ds2)
 instance Natural Binary where
   zero = Digits []
   incr (Digits ds) = Digits (incrDigits ds)
-  decr (Digits ds) = Digits (decrDigits ds)
+  decr (Digits []) = Nothing
+  decr (Digits ds) = Just (Digits (decrDigits ds))
   add (Digits ds1) (Digits ds2) = Digits (addDigits ds1 ds2)

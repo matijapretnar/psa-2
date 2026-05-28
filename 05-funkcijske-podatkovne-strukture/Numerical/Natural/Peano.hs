@@ -14,6 +14,5 @@ instance Show Peano where
 instance Natural Peano where
   zero = Zero
   incr = Succ
-  decr (Succ n) = n
-  add Zero m = m
-  add (Succ n) m = Succ (add n m)
+  decr Zero = Nothing
+  decr (Succ n) = Just n

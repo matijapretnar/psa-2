@@ -24,21 +24,12 @@ unconsDigits (One t : ds) = (t, Two ta tb : ds')
     (t', ds') = unconsDigits ds
     (ta, tb) = splitTree t'
 
-appendDigits :: (Pow2 t) => [Digit t a] -> [Digit t a] -> [Digit t a]
-appendDigits [] ds2 = ds2
-appendDigits ds1 ds2 =
-  let (t, ds1') = unconsDigits ds1
-   in consDigits t (appendDigits ds1' ds2)
-
 instance (Pow2 t) => RandomAccessList (ZerolessList t) where
   nil = Digits []
   cons x (Digits ds) = Digits (consDigits (singleton x) ds)
-  head (Digits (One t : _)) = lookupTree 0 t
-  head (Digits (Two t1 _ : _)) = lookupTree 0 t1
-  tail (Digits ds) = Digits ds'
-    where
-      (_, ds') = unconsDigits ds
-  append (Digits ds1) (Digits ds2) = Digits (appendDigits ds1 ds2)
+  uncons (Digits []) = Nothing
+  -- t ima samo en element, zato lahko varno vzamemo samo prvega
+  uncons (Digits ds) = Just (lookupTree 0 t, Digits ds') where (t, ds') = unconsDigits ds
   lookup i (Digits ds) = look i ds
     where
       look j (One t : rest)

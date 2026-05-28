@@ -1,3 +1,4 @@
+import Data.Maybe (fromJust)
 import Natural
 import Natural.Binary (Binary)
 import Natural.Peano (Peano)
@@ -16,8 +17,8 @@ import RandomAccessList.NestedBinaryList (NestedBinaryList)
 testNatural :: (Natural n) => [(String, n)]
 testNatural =
   let padTo7 s = replicate (7 - length s) ' ' ++ s
-   in let testInc = map (\i -> (padTo7 (show i), fromInt i)) [0 .. 13]
-          testDec = ("decr 14", decr (fromInt 14))
+   in let testInc = map (\i -> (padTo7 $ show i, fromInt i)) [0 .. 13]
+          testDec = ("decr 14", fromJust $ decr $ fromInt 14)
           testAdd = ("add 6 7", add (fromInt 6) (fromInt 7))
        in testInc ++ [testDec, testAdd]
 

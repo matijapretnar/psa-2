@@ -19,12 +19,9 @@ decrWeights :: [Int] -> [Int]
 decrWeights (1 : ws) = ws
 decrWeights (w : ws) = (w `div` 2) : (w `div` 2) : ws
 
-addWeights :: [Int] -> [Int] -> [Int]
-addWeights [] ds2 = ds2
-addWeights ds1 ds2 = incrWeights (addWeights (decrWeights ds1) ds2)
-
 instance Natural SkewBinary where
   zero = Weights []
   incr (Weights ds) = Weights (incrWeights ds)
-  decr (Weights ds) = Weights (decrWeights ds)
-  add (Weights ds1) (Weights ds2) = Weights (addWeights ds1 ds2)
+  decr (Weights []) = Nothing
+  decr (Weights ds) = Just (Weights (decrWeights ds))
+

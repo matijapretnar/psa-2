@@ -8,8 +8,11 @@ where
 class Natural n where
   zero :: n
   incr :: n -> n
-  decr :: n -> n
+  decr :: n -> Maybe n
   add :: n -> n -> n
+  add m n = case decr m of
+      Nothing -> n
+      Just m' -> incr (add m' n)
 
 fromInt :: (Natural n) => Integer -> n
 fromInt 0 = zero

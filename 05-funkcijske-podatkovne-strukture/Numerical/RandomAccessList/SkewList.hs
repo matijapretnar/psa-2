@@ -21,22 +21,11 @@ unconsTrees ((w, t) : wts) = (x, (w `div` 2, t1) : (w `div` 2, t2) : wts)
   where
     (x, t1, t2) = splitTree t
 
-appendTrees :: (Pow2_1 t) => [(Int, t a)] -> [(Int, t a)] -> [(Int, t a)]
-appendTrees [] ds2 = ds2
-appendTrees ds1 ds2 =
-  let (d, ds1') = unconsTrees ds1
-   in consTrees d (appendTrees ds1' ds2)
-
 instance (Pow2_1 t) => RandomAccessList (SkewList t) where
   nil = Weights []
   cons x (Weights wts) = Weights (consTrees x wts)
-  head (Weights ((_, t) : _)) = x
-    where
-      (x, _, _) = splitTree t
-  tail (Weights wts) = Weights wts'
-    where
-      (_, wts') = unconsTrees wts
-  append (Weights wts1) (Weights wts2) = Weights (appendTrees wts1 wts2)
+  uncons (Weights []) = Nothing
+  uncons (Weights wts) = Just (x, Weights wts') where (x, wts') = unconsTrees wts
   lookup i (Weights wts) = look i wts
     where
       look j ((w, t) : rest)

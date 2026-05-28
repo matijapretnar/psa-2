@@ -9,9 +9,11 @@ import Prelude hiding (head, lookup, tail)
 class RandomAccessList f where
   nil :: f a
   cons :: a -> f a -> f a
-  head :: f a -> a
-  tail :: f a -> f a
+  uncons :: f a -> Maybe (a, f a)
   append :: f a -> f a -> f a
+  append xs ys = case uncons xs of
+      Nothing -> ys
+      Just (x, xs') -> cons x (append xs' ys)
   lookup :: Int -> f a -> a
   update :: Int -> a -> f a -> f a
   size :: f a -> Int

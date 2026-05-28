@@ -24,21 +24,14 @@ unconsDigit (Zero : ds) = (t1, One t2 : ds')
     (t', ds') = unconsDigit ds
     (t1, t2) = splitTree t'
 
-appendDigits :: (Pow2 t) => [Digit t a] -> [Digit t a] -> [Digit t a]
-appendDigits [] ds2 = ds2
-appendDigits ds1 ds2 =
-  let (d, ds1') = unconsDigit ds1
-   in consDigit d (appendDigits ds1' ds2)
-
 instance (Pow2 t) => RandomAccessList (BinaryList t) where
   nil = BL []
   cons x (BL ds) = BL (consDigit (singleton x) ds)
-  head (BL (One d : _)) = lookupTree 0 d
-  head (BL (Zero : ds)) = head (BL ds)
-  tail (BL ds) = BL ds'
-    where
-      (_, ds') = unconsDigit ds
-  append (BL ds1) (BL ds2) = BL (appendDigits ds1 ds2)
+  uncons (BL []) = Nothing
+  -- t ima samo en element, zato lahko varno vzamemo samo prvega
+  uncons (BL ds) = Just (lookupTree 0 t, BL ds')
+    where (t, ds') = unconsDigit ds
+
   lookup i (BL ds) = look i ds
     where
       look j (Zero : rest) = look j rest

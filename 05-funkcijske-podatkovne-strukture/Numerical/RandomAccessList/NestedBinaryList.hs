@@ -7,20 +7,18 @@ import RandomAccessList
 
 data NestedBinaryList a = Nil | Zero (NestedBinaryList (a, a)) | One a (NestedBinaryList (a, a))
 
-uncons :: NestedBinaryList a -> (a, NestedBinaryList a)
-uncons (Zero ps) = (x, One y ps') where ((x, y), ps') = uncons ps
-uncons (One x Nil) = (x, Nil)
-uncons (One x ps) = (x, Zero ps)
+unconsNonNil :: NestedBinaryList a -> (a, NestedBinaryList a)
+unconsNonNil (Zero ps) = (x, One y ps') where ((x, y), ps') = unconsNonNil ps
+unconsNonNil (One x Nil) = (x, Nil)
+unconsNonNil (One x ps) = (x, Zero ps)
 
 instance RandomAccessList NestedBinaryList where
   nil = Nil
-  head ps = x where (x, _) = uncons ps
   cons x Nil = One x Nil
   cons x (Zero ps) = One x ps
   cons x (One y ps) = Zero (cons (x, y) ps)
-  tail ps = ps' where (_, ps') = uncons ps
-  append Nil qs = qs
-  append ps qs = cons x (append ps' qs) where (x, ps') = uncons ps
+  uncons Nil = Nothing
+  uncons ps = Just (x, ps') where (x, ps') = unconsNonNil ps
   lookup i ps = look i ps
     where
       look :: Int -> NestedBinaryList a -> a

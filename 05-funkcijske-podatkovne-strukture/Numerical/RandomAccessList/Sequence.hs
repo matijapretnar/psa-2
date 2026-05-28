@@ -9,9 +9,9 @@ newtype Sequence a = Sequence (Int, Int -> a)
 
 instance RandomAccessList Sequence where
   nil = Sequence (0, \_ -> error "empty")
-  head (Sequence (_, f)) = f 0
   cons x (Sequence (n, f)) = Sequence (n + 1, \i -> if i == 0 then x else f (i - 1))
-  tail (Sequence (n, f)) = Sequence (n - 1, \i -> f (i + 1))
+  uncons (Sequence (0, _)) = Nothing
+  uncons (Sequence (n, f)) = Just (f 0, Sequence (n - 1, \i -> f (i + 1)))
   append (Sequence (m, f)) (Sequence (n, g)) =
     Sequence (m + n, \i -> if i < m then f i else g (i - m))
   lookup i (Sequence (_, f)) = f i
